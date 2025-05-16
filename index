@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Essentia Metrosexual Quiz</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #1a1a1a;
+      color: #f2f1ee;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    h1, h2 {
+      color: #f2f1ee;
+      text-align: center;
+    }
+    .button {
+      background-color: #f27c2c;
+      color: #1a1a1a;
+      border: none;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      width: 100%;
+      cursor: pointer;
+      font-size: 1rem;
+      border-radius: 8px;
+    }
+    .button:hover {
+      background-color: #d66a22;
+    }
+    .landing-page {
+      text-align: center;
+    }
+    .quiz-container {
+      display: none;
+    }
+    .result {
+      background-color: #2d2d2d;
+      color: #f2f1ee;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .result img {
+      max-width: 200px;
+      margin: 1rem 0;
+      border-radius: 8px;
+    }
+    .feedback-link {
+      margin-top: 2rem;
+      font-size: 1rem;
+      color: #f2f1ee;
+      text-decoration: none;
+    }
+    .feedback-link:hover {
+      color: #f27c2c;
+    }
+    .answer-box {
+      background-color: #f27c2c;
+      color: #1a1a1a;
+      padding: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      flex: 1 1 45%;
+      text-align: center;
+      margin: 0.5rem;
+      word-wrap: break-word;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .answer-box:hover {
+      background-color: #d66a22;
+      transform: scale(1.03);
+    }
+    .answers {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+    @media (max-width: 600px) {
+      .answers {
+        flex-direction: column;
+      }
+      .answer-box {
+        flex: 1 1 100%;
+        margin: 0.5rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Landing Page -->
+  <div class="container landing-page" id="landingPage">
+    <h1>Selamat datang di Essentia</h1>
+    <p>Tahukah kamu? Merawat diri dan menjaga penampilan bukanlah sebuah kelemahan, melainkan bentuk penghargaan terhadap diri sendiri. Pria yang peduli akan penampilannya menunjukkan bahwa ia paham pentingnya keseimbangan antara penampilan luar dan kesehatan mental.</p>
+    <p>Melalui kampanye ini, Essentia ingin mengajak kamu untuk lebih bijak dalam merawat diri, tanpa perlu khawatir dengan stigma yang ada di sekitar. Karena pada akhirnya, rasa percaya diri lah yang akan berbicara.</p>
+    <p>Sebelum melangkah lebih jauh, yuk kenali dulu seberapa peduli kamu terhadap diri sendiri lewat quiz sederhana ini.</p>
+    <h2>Siap? Mari kita mulai.</h2>
+    <button class="button" onclick="startQuiz()">Mulai Quiz</button>
+  </div>
+
+  <!-- Quiz Page -->
+  <div class="container quiz-container" id="quizPage">
+    <h1>Quiz Kepribadian Metroseksual</h1>
+    <div id="quiz"></div>
+    <div class="result" id="result" style="display: none;"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "Apa yang paling penting buat kamu sebelum keluar rumah?",
+        answers: [
+          { text: "Pakaian rapi & stylish", type: "David Beckham" },
+          { text: "Aksesori & sneakers matching", type: "Pharrell Williams" },
+          { text: "Outfit unik yang ekspresif", type: "Timothée Chalamet" },
+          { text: "Tubuh fit & wangi", type: "Chris Hemsworth" }
+        ]
+      },
+      {
+        question: "Apa kebiasaan perawatan diri yang kamu lakukan?",
+        answers: [
+          { text: "Facial & cukur rutin", type: "David Beckham" },
+          { text: "Pakai skincare lengkap", type: "Kim Seokjin" },
+          { text: "Eksperimen dengan gaya rambut", type: "Pharrell Williams" },
+          { text: "Fitness dan grooming cepat", type: "Chris Hemsworth" }
+        ]
+      },
+      {
+        question: "Kalau ada fashion event, kamu...",
+        answers: [
+          { text: "Tampil all out dengan gaya maskulin", type: "David Beckham" },
+          { text: "Mix streetwear dan luxury brand", type: "Pharrell Williams" },
+          { text: "Tampil artsy dan avant-garde", type: "Timothée Chalamet" },
+          { text: "Lebih suka tampil simpel dan fit", type: "Chris Hemsworth" }
+        ]
+      },
+      {
+        question: "Apa hal yang paling kamu jaga dari penampilan?",
+        answers: [
+          { text: "Fashion dan kesan elegan", type: "David Beckham" },
+          { text: "Aura unik dan eksperimental", type: "Timothée Chalamet" },
+          { text: "Kesehatan kulit dan body goals", type: "Kim Seokjin" },
+          { text: "Kebugaran tubuh dan maskulinitas", type: "Chris Hemsworth" }
+        ]
+      }
+    ];
+
+    let currentQuestion = 0;
+    let answersTally = {};
+    const quizContainer = document.getElementById('quiz');
+    const resultContainer = document.getElementById('result');
+    const landingPage = document.getElementById('landingPage');
+    const quizPage = document.getElementById('quizPage');
+
+    function startQuiz() {
+      landingPage.style.display = 'none';
+      quizPage.style.display = 'block';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = quizData[currentQuestion];
+      quizContainer.innerHTML = `
+        <div class="question">
+          <h2>${q.question}</h2>
+          <div class="answers">
+            ${q.answers.map(a => `<div class="answer-box" onclick="selectAnswer('${a.type}')">${a.text}</div>`).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function selectAnswer(type) {
+      answersTally[type] = (answersTally[type] || 0) + 1;
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      quizContainer.innerHTML = '';
+      const topResult = Object.entries(answersTally).sort((a, b) => b[1] - a[1])[0][0];
+      let descriptions = {
+        "David Beckham": "Kamu adalah tipe metroseksual klasik: stylish, elegan, dan sangat menjaga penampilan.",
+        "Pharrell Williams": "Kamu adalah fashion explorer — percaya diri dengan gaya unik dan suka mix & match.",
+        "Timothée Chalamet": "Kamu tampil beda dan berani berekspresi. Gaya kamu artistik dan tetap maskulin.",
+        "Chris Hemsworth": "Kamu fokus pada kesehatan tubuh dan grooming. Simpel tapi tetap menarik perhatian.",
+        "Kim Seokjin": "Kamu cinta skincare, tampil flawless, dan sangat peduli dengan self-care dan estetika."
+      };
+      let images = {
+        "David Beckham": "images/beckham.jpg",
+        "Pharrell Williams": "images/pharrell.jpg",
+        "Timothée Chalamet": "images/timothee.jpg",
+        "Chris Hemsworth": "images/chris.jpg",
+        "Kim Seokjin": "images/seokjin.jpg"
+      };
+      resultContainer.innerHTML = `
+        <h2>Hasilmu: ${topResult}</h2>
+        <img src="${images[topResult]}" alt="${topResult}">
+        <p>${descriptions[topResult]}</p>
+        <p>Ayo ajak teman-temanmu ikut quiz ini, download gambar hasilmu, dan tag @campaign.essentia di Instagram Story kamu!</p>
+        <a href="https://forms.gle/FS4Sy1fkVzffDthf6" class="feedback-link" target="_blank">Berikan feedback tentang kampanye di sini!</a>
+      `;
+      resultContainer.style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
